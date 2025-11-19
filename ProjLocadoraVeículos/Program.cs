@@ -1,6 +1,4 @@
 ﻿using Locadora.Models;
-using Utils.Databases;
-using Microsoft.Data.SqlClient;
 using Locadora.Controller;
 
 var cliente = new Cliente("Naruto Uzucrack", "n@d.com", "11944983683");
