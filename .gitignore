@@ -263,3 +263,9 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+/.vs/ProjectEvaluation
+/.vs/Locadora.View/DesignTimeBuild
+/.vs/Locadora.View/FileContentIndex
+/.vs/Locadora.View/v17
+/.vs/Locadora.View/v18
+/VIEW.sql
