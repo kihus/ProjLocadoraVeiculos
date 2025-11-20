@@ -6,25 +6,53 @@ namespace Locadora.Controller;
 
 public class DocumentoController
 {
-    public void AdicionarDocumento(Documento documento)
+    public void AdicionarDocumento(Documento documento, SqlConnection connection, SqlTransaction transaction)
     {
-        using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+        try
         {
-            try
-            {
-                connection.Open();
-                var command = new SqlCommand(Documento.INSERT_DOCUMENTO, connection);
+            var command = new SqlCommand(Documento.INSERT_DOCUMENTO, connection, transaction);
 
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("Erro ao adicionar o Documento: " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Erro inesperado ao adicionar documento: " + ex.Message);
-            }
+            command.Parameters.AddWithValue("@ClienteId", documento.ClienteId);
+            command.Parameters.AddWithValue("@TipoDocumento", documento.TipoDocumento);
+            command.Parameters.AddWithValue("@Numero", documento.Numero);
+            command.Parameters.AddWithValue("@DataEmissao", documento.DataEmissao);
+            command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
+
+            command.ExecuteNonQuery();
+            Console.WriteLine("Documento adicionado com sucesso");
         }
-        
+        catch (SqlException ex)
+        {
+            throw new Exception("Erro ao adicionar o Documento: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Erro inesperado ao adicionar documento: " + ex.Message);
+        }
+    }
+
+    public async Task AtualizarDocumento(Documento documento, SqlConnection connection, SqlTransaction transaction)
+    {
+        try
+        {
+            var command = new SqlCommand(Documento.UPDATE_DOCUMENTO, connection, transaction);
+
+            command.Parameters.AddWithValue("@ClienteId", documento.ClienteId);
+            command.Parameters.AddWithValue("@TipoDocumento", documento.TipoDocumento);
+            command.Parameters.AddWithValue("@Numero", documento.Numero);
+            command.Parameters.AddWithValue("@DataEmissao", documento.DataEmissao);
+            command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
+
+            await command.ExecuteNonQueryAsync();
+            Console.WriteLine("Documento atualizado com sucesso");
+        }
+        catch (SqlException ex)
+        {
+            throw new Exception("Erro ao adicionar o Documento: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Erro inesperado ao adicionar documento: " + ex.Message);
+        }
     }
 }
