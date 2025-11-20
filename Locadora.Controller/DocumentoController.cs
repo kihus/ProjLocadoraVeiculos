@@ -6,7 +6,7 @@ namespace Locadora.Controller;
 
 public class DocumentoController
 {
-    public void AdicionarDocumento(Documento documento, SqlConnection connection, SqlTransaction transaction)
+    public async Task AdicionarDocumento(Documento documento, SqlConnection connection, SqlTransaction transaction)
     {
         try
         {
@@ -18,7 +18,7 @@ public class DocumentoController
             command.Parameters.AddWithValue("@DataEmissao", documento.DataEmissao);
             command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
 
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             Console.WriteLine("Documento adicionado com sucesso");
         }
         catch (SqlException ex)

@@ -9,10 +9,12 @@ public class ClienteController
 	public async Task AdicionarCliente(Cliente cliente, Documento documento)
 	{
 		await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+	
 		{
-			connection.Open();
+			await connection.OpenAsync();
 
 			await using var transaction = connection.BeginTransaction();
+			
 			{
 				try
 				{
@@ -22,24 +24,24 @@ public class ClienteController
 					command.Parameters.AddWithValue("@Email", cliente.Email);
 					command.Parameters.AddWithValue("@Telefone", cliente.Telefone ?? null);
 
-					cliente.SetClienteId(Convert.ToInt32(command.ExecuteScalar()));
+					cliente.SetClienteId(Convert.ToInt32(await command.ExecuteScalarAsync()));
 
 					documento.SetClienteId(cliente.ClienteId);
 
 					var documentoController = new DocumentoController();
-					documentoController.AdicionarDocumento(documento, connection, transaction);
+					await documentoController.AdicionarDocumento(documento, connection, transaction);
 					
-					transaction.Commit();
+					await transaction.CommitAsync();
 					Console.WriteLine("Deu certo");
 				}
 				catch (SqlException ex)
 				{
-					transaction.Rollback();
+					await transaction.RollbackAsync();
 					throw new Exception("Erro ao adicionar cliente: " + ex.Message);
 				}
 				catch (Exception ex)
 				{
-					transaction.Rollback();
+					await transaction.RollbackAsync();
 					throw new Exception("Erro inesperado ao adicionar cliente: " + ex.Message);
 				}
 			}
@@ -91,6 +93,7 @@ public class ClienteController
 			}
 		}
 	}
+	
 	public async Task<Cliente> BuscaClientePorEmail(string email)
 	{
 		await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -98,7 +101,7 @@ public class ClienteController
 		{ 
 			try
 			{
-				connection.Open();
+				await connection.OpenAsync();
 
 				var command = new SqlCommand(Cliente.SELECT_CLIENTE_EMAIL, connection);
 				command.Parameters.AddWithValue("@Email", email);
@@ -129,7 +132,6 @@ public class ClienteController
 				}
 
 				return clientes.Find(x => x.Email == email) ?? throw new Exception();
-
 			}
 			catch (SqlException ex)
 			{
@@ -141,19 +143,21 @@ public class ClienteController
 			}
 		}
 	}
+	
 	public async Task<Cliente> AtualizarTelefoneCliente(string telefone, string email)
 	{
 		await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
-		
+	
 		{
+			await connection.OpenAsync();
+			
 			await using var transaction = connection.BeginTransaction();
 			
 			{
 				try
 				{
-					connection.Open();
-
-					var cliente = BuscaClientePorEmail(email).Result ?? throw new Exception("Cliente não encontrado");;
+					var cliente = BuscaClientePorEmail(email).Result ?? 
+					              throw new Exception("Cliente não encontrado");
 				
 					cliente.SetTelefone(telefone);
 
@@ -162,7 +166,7 @@ public class ClienteController
 					command.Parameters.AddWithValue("@Telefone", cliente.Telefone);
 					command.Parameters.AddWithValue("@idCliente", cliente.ClienteId);
 
-					command.ExecuteNonQuery();
+					await command.ExecuteNonQueryAsync();
 					return cliente;
 				}
 				catch (SqlException ex)
@@ -177,16 +181,19 @@ public class ClienteController
 		}
 
 	}
+	
 	public async Task AtualizarDocumentoCliente(string email, Documento documento)
 	{
 		var cliente = BuscaClientePorEmail(email).Result ??
 		              throw new Exception("Cliente nao encontrado");
 		
-		using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+		await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+	
 		{
-			connection.Open();
+			await connection.OpenAsync();
 			
-			using var transaction = connection.BeginTransaction();
+			await using var transaction = connection.BeginTransaction();
+			
 			{
 				try
 				{
@@ -194,27 +201,30 @@ public class ClienteController
 					documento.SetClienteId(cliente.ClienteId);
 					await documentoController.AtualizarDocumento(documento, connection, transaction);
 					
-					transaction.Commit();
+					await transaction.CommitAsync();
 				}
 				catch (SqlException ex)
 				{
-					transaction.Rollback();
+					await transaction.RollbackAsync();
 					throw new Exception("Erro ao atualizar cliente: " + ex.Message);
 				}
 				catch (Exception ex)
 				{
-					transaction.Rollback();
+					await transaction.RollbackAsync();
 					throw new Exception("Erro inesperado ao atualizar cliente: " + ex.Message);
 				}
 			}
 		}
 	} 
+	
 	public async Task ExcluirCliente(string email)
 	{
 		await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+		
 		{
-			connection.Open();
+			await connection.OpenAsync();
 			await using var transaction = connection.BeginTransaction();
+			
 			{
 				try
 				{
@@ -224,19 +234,19 @@ public class ClienteController
 
 					
 					command.Parameters.AddWithValue("@idCliente", cliente.ClienteId);
-					command.ExecuteNonQuery();
+					await command.ExecuteNonQueryAsync();
 					
-					transaction.Commit();
+					await transaction.CommitAsync();
 					
 					Console.WriteLine("Cliente excluido com sucesso!");
 				}
 				catch (SqlException ex)
 				{
-					Console.WriteLine("Erro ao excluir cliente: " + ex.Message);
+					throw new Exception("Erro ao excluir cliente: " + ex.Message);
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine("Erro inesperado ao excluir cliente: " + ex.Message);
+					throw new Exception("Erro inesperado ao excluir cliente: " + ex.Message);
 				}
 			}
 		}
