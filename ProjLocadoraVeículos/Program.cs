@@ -1,33 +1,47 @@
 ﻿using Locadora.Models;
 using Locadora.Controller;
-using Microsoft.Data.SqlClient;
 
+
+
+// CRUD Cliente
+var clienteController = new ClienteController();
 var cliente = new Cliente("Orochimaru", "Orochimaru@konoha.com");
 var documento = new Documento("cpf", "77799977700", DateOnly.Parse("04/21/2023"), DateOnly.Parse("04/22/2030"));
 
-//Console.WriteLine(cliente);
+try
+{
+    await clienteController.AdicionarCliente(cliente, documento);
 
-var clienteController = new ClienteController();
+    await clienteController.AtualizarTelefoneCliente("1199993333", "n@d.com");
+    
+    await clienteController.AtualizarDocumentoCliente("Orochimaru@konoha.com", documento);
+    
+    await clienteController.ExcluirCliente("Orochimaru@konoha.com");
 
-//await clienteController.AdicionarCliente(cliente, documento);
+    var clientes = clienteController.ListarTodosCliente().Result.OrderBy(x => x.Nome).ToList();
+    clientes.ForEach(x => Console.WriteLine(x));
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Erro: " + ex.Message, ex.Source);
+}
 
-//await clienteController.AtualizarTelefoneCliente("1199993333", "n@d.com");
+// CRUD Categoria
+var categoria = new Categoria("Jeep", "Carro grande demais", 298.99m);
+var categoriaController = new CategoriaController();
 
-//await clienteController.ExcluirCliente("Orochimaru@konoha.com");
+try
+{
+    await categoriaController.AdicionarCategoria(categoria);
 
-//await clienteController.AtualizarDocumentoCliente("Orochimaru@konoha.com", documento);
+    await categoriaController.AtualizarCategoria(categoria);
 
-// try
-// {
-// 	
-//var clientes = clienteController.ListarTodosCliente().Result.OrderBy(x => x.Nome).ToList();
-// 	clientes.ForEach(x => Console.WriteLine(x));
-// }
-// catch (Exception ex)
-// {
-// 	Console.WriteLine("Erro: " + ex.Message, ex.Source);
-// }
+    await categoriaController.ExcluirCategoria(categoria.Nome);
 
-
-	
-	
+    var categorias = categoriaController.ListarTodasCategorias().Result.ToList();
+    categorias.ForEach(x => Console.WriteLine(x));
+}
+catch (Exception ex)
+{
+    throw new Exception("Erro: " + ex.Message);
+}
