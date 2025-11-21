@@ -1,6 +1,6 @@
 ﻿using Locadora.Models;
 using Locadora.Controller;
-
+using Locadora.Models.Enums;
 
 
 // CRUD Cliente
@@ -13,17 +13,22 @@ try
     await clienteController.AdicionarCliente(cliente, documento);
 
     await clienteController.AtualizarTelefoneCliente("1199993333", "n@d.com");
-    
-    await clienteController.AtualizarDocumentoCliente("Orochimaru@konoha.com", documento);
-    
-    await clienteController.ExcluirCliente("Orochimaru@konoha.com");    
 
-    var clientes = clienteController.ListarTodosCliente().Result.OrderBy(x => x.Nome).ToList();
-    clientes.ForEach(x => Console.WriteLine(x));
+    await clienteController.AtualizarDocumentoCliente("Orochimaru@konoha.com", documento);
+
+    await clienteController.ExcluirCliente("Orochimaru@konoha.com");
+
+    clienteController
+        .ListarTodosCliente()
+        .Result
+        .OrderBy(x => x.Nome)
+        .ToList()
+        .ForEach(x => Console.WriteLine(x));
+    
 }
 catch (Exception ex)
 {
-    Console.WriteLine("Erro: " + ex.Message, ex.Source);
+    Console.WriteLine(ex.Message);
 }
 
 // CRUD Categoria
@@ -33,15 +38,43 @@ var categoriaController = new CategoriaController();
 try
 {
     await categoriaController.AdicionarCategoria(categoria);
-    
+
     await categoriaController.AtualizarCategoria(categoria);
-    
+
     await categoriaController.ExcluirCategoria(categoria.Nome);
 
-    var categorias = categoriaController.ListarTodasCategorias().Result.ToList();
-    categorias.ForEach(x => Console.WriteLine(x));
+    categoriaController
+        .ListarTodasCategorias()
+        .Result
+        .ToList()
+        .ForEach(x => Console.WriteLine(x));
 }
 catch (Exception ex)
 {
-    throw new Exception("Erro: " + ex.Message);
+    Console.WriteLine(ex.Message);
+}
+
+
+// CRUD Veiculo
+var veiculo = new Veiculo(1, "ABC1D234", "Renault", "Kwid", 2025, EStatusVeiculo.Alugado);
+var veiculoController = new VeiculoController();
+
+try
+{
+    await veiculoController.AdicionarVeiculo(veiculo);
+    
+    Console.WriteLine(await veiculoController.BuscarVeiculoPlaca(veiculo.Placa));
+    
+    await veiculoController.UpdateVeiculo(EStatusVeiculo.Reservado, "MNO7890");
+    
+    await veiculoController.ExcluirVeiculo(8);
+    
+    veiculoController
+        .ListarVeiculos()
+        .Result
+        .ForEach(x => Console.WriteLine(x));
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
 }

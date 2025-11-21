@@ -43,7 +43,7 @@ public class CategoriaController
 
         if (categoria.CategoriaId == 0)
             throw new Exception("Categoria não encontrada!");
-        
+
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
             await connection.OpenAsync();
@@ -89,7 +89,7 @@ public class CategoriaController
                 var command = new SqlCommand(Categoria.SELECT_CATEGORIA_NOME, connection);
                 command.Parameters.AddWithValue("@Nome", nome);
                 var reader = await command.ExecuteReaderAsync();
-                
+
                 var idCategoria = 0;
 
                 while (reader.Read())
@@ -110,10 +110,41 @@ public class CategoriaController
         }
     }
 
+    public async Task<string> BuscarCategoriaNome(int categoriaId)
+    {
+        string nomeCategoria = null;
+        await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+        {
+            try
+            {
+                await connection.OpenAsync();
+
+                var command = new SqlCommand(Categoria.SELECT_CATEGORIA_ID, connection);
+                command.Parameters.AddWithValue("@CategoriaId", categoriaId);
+                var reader = await command.ExecuteReaderAsync();
+                
+                while (reader.Read())
+                {
+                    nomeCategoria = reader.GetString(0);
+                }
+
+                return nomeCategoria ?? throw new Exception("Categoria nao encontrada!");
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar a categoria: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao buscar categoria: " + ex.Message);
+            }
+        }
+    }
+
     public async Task<List<Categoria>> ListarTodasCategorias()
     {
-        var categorias =  new List<Categoria>();
-        
+        var categorias = new List<Categoria>();
+
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
             await connection.OpenAsync();
@@ -122,13 +153,13 @@ public class CategoriaController
             {
                 var command = new SqlCommand(Categoria.SELECT_ALL_CATEGORIA, connection);
                 var reader = await command.ExecuteReaderAsync();
-                
+
                 while (reader.Read())
                 {
                     categorias.Add(new Categoria(
-                        reader["Nome"].ToString(),
-                        reader["Descricao"].ToString(),
-                        (decimal) reader["Diaria"]
+                            reader["Nome"].ToString(),
+                            reader["Descricao"].ToString(),
+                            (decimal)reader["Diaria"]
                         )
                     );
                 }
@@ -151,7 +182,7 @@ public class CategoriaController
 
         if (categoriaId is 0)
             throw new Exception("Categoria nao encontrada!");
-        
+
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
             await connection.OpenAsync();

@@ -19,6 +19,9 @@ public class Categoria(
     public static readonly string SELECT_CATEGORIA_NOME =
         "SELECT CategoriaID FROM tblCategorias WHERE Nome = @Nome;";
 
+    public static readonly string SELECT_CATEGORIA_ID = 
+        "SELECT Nome FROM tblCategorias WHERE CategoriaID = @CategoriaId;";
+    
     public static readonly string SELECT_ALL_CATEGORIA =
         "SELECT Nome, Descricao, Diaria FROM tblCategorias";
     
