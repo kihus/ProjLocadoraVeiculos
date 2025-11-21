@@ -2,20 +2,19 @@
 
 public class Categoria(
     string nome, 
-    string descricao, 
     decimal diaria
     )
 {
     public int CategoriaId { get; private set; }
     public string Nome { get; private set; } = nome;
-    public string Descricao { get; private set; } = descricao;
+    public string? Descricao { get; private set; } = string.Empty;
     public decimal Diaria { get; private set; } = diaria;
     
     public static readonly string INSERT_CATEGORIA =
-        "INSERT INTO tblCategorias (Nome, Descricao, Diaria) VALUES (@Nome, @Descricao, @Diaria); SELECT SCOPE_IDENTITY();";
+        "EXEC sp_AdicionarCategoria @Nome, @Descricao, @Diaria;";
     
     public static readonly string UPDATE_CATEGORIA =
-        "UPDATE tblCategorias SET Nome = @Nome, Descricao = @Descricao, Diaria = @Diaria WHERE CategoriaId = @CategoriaId;";
+        "EXEC sp_AtualizarCategoria @Nome, @Descricao, @Diaria, @CategoriaId;";
     
     public static readonly string SELECT_CATEGORIA_NOME =
         "SELECT CategoriaID FROM tblCategorias WHERE Nome = @Nome;";
@@ -24,7 +23,12 @@ public class Categoria(
         "SELECT Nome, Descricao, Diaria FROM tblCategorias";
     
     public static readonly string DELETE_CATEGORIA =
-        "DELETE FROM tblCategorias WHERE CategoriaID = @CategoriaId;";
+        "EXEC sp_ExcluirCategoria @CategoriaId";
+
+    public Categoria(string nome, string? descricao, decimal diaria) : this(nome, diaria)
+    {
+        Descricao = descricao;
+    }
     
     public void SetCategoriaId(int categoriaId) 
         =>  CategoriaId = categoriaId;

@@ -16,7 +16,7 @@ try
     
     await clienteController.AtualizarDocumentoCliente("Orochimaru@konoha.com", documento);
     
-    await clienteController.ExcluirCliente("Orochimaru@konoha.com");
+    await clienteController.ExcluirCliente("Orochimaru@konoha.com");    
 
     var clientes = clienteController.ListarTodosCliente().Result.OrderBy(x => x.Nome).ToList();
     clientes.ForEach(x => Console.WriteLine(x));
@@ -27,15 +27,15 @@ catch (Exception ex)
 }
 
 // CRUD Categoria
-var categoria = new Categoria("Jeep", "Carro grande demais", 298.99m);
+var categoria = new Categoria("Kombi", 38.99m);
 var categoriaController = new CategoriaController();
 
 try
 {
     await categoriaController.AdicionarCategoria(categoria);
-
+    
     await categoriaController.AtualizarCategoria(categoria);
-
+    
     await categoriaController.ExcluirCategoria(categoria.Nome);
 
     var categorias = categoriaController.ListarTodasCategorias().Result.ToList();

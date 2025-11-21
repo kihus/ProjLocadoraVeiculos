@@ -78,7 +78,7 @@ public class CategoriaController
         }
     }
 
-    public async Task<int> BuscarCategoria(string nome)
+    private async Task<int> BuscarCategoria(string nome)
     {
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
