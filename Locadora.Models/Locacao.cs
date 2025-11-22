@@ -36,6 +36,7 @@ public class Locacao(
      
      public readonly static string sp_CancelarLocacao =
          "EXEC sp_CancelarLocacao @idLocacao, @Status";
+     
     
     public void SetVeiculoNome(string nome)
         => VeiculoNome = nome; 
