@@ -86,7 +86,9 @@ var locacaoController = new  LocacaoController();
 try
 {
     //await locacaoController.AdicionarLocacao(locacao);
-    await locacaoController.AtualizarLocacao(7, DateTime.Parse("11/30/2025"), EStatus.Concluida);
+    //await locacaoController.AtualizarLocacao(7, DateTime.Parse("11/30/2025"), EStatus.Concluida);
+    //locacaoController.ListarLocacao().Result.ToList().ForEach(x => Console.WriteLine(x));
+    //await locacaoController.CancelarLocacao(8);
 }
 catch (Exception ex)
 {

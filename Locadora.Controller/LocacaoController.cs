@@ -10,7 +10,6 @@ public class LocacaoController : ILocacaoController
 {
     public async Task AdicionarLocacao(Locacao locacao)
     {
-        //@ClienteId, @VeiculoId, @DataDevolucaoPrevista, @DataDevolucaoReal, @ValorDiaria, @ValorTotal, @Multa, @Status
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
             await connection.OpenAsync();
@@ -52,14 +51,14 @@ public class LocacaoController : ILocacaoController
 
     public async Task AtualizarLocacao(int idLocacao, DateTime dataDevolucaoReal, EStatus status)
     {
-        var locacao = LocalizarLocacaoId(idLocacao).Result;
+        var locacao = BuscarLocacaoId(idLocacao).Result;
         var dataDevolucao = dataDevolucaoReal.Day - locacao.DataDevolucaoPrevista.Day;
-        
-        if(dataDevolucao > 0)
+
+        if (dataDevolucao > 0)
             locacao.SetMulta(dataDevolucao * locacao.ValorDiaria);
-        
+
         locacao.SetStatus(status);
-        
+
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
             await connection.OpenAsync();
@@ -93,7 +92,7 @@ public class LocacaoController : ILocacaoController
         }
     }
 
-    public async Task<Locacao> LocalizarLocacaoId(int locacaoId)
+    public async Task<Locacao> BuscarLocacaoId(int locacaoId)
     {
         Locacao locacao = null;
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -115,10 +114,11 @@ public class LocacaoController : ILocacaoController
                         dataPrevista,
                         reader.GetDecimal(5)
                     );
+
+                    if (!reader.IsDBNull(4))
+                        locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(4));
                     
-                    if(!reader.IsDBNull(4))
-                        locacao.SetDataDevolucaoReal((DateTime) reader.GetValue(4));
-                    
+                    locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(8)));
                     locacao.SetDataLocacao(reader.GetDateTime(2));
                 }
             }
@@ -134,13 +134,85 @@ public class LocacaoController : ILocacaoController
         return locacao ?? throw new Exception("Nao foi possivel localizar a locacao!");
     }
 
-    public Task<List<Locacao>> ListarLocacao()
+    public async Task<List<Locacao>> ListarLocacao()
     {
-        throw new NotImplementedException();
+        var locacoes = new List<Locacao>();
+        await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+        {
+            try
+            {
+                await connection.OpenAsync();
+
+                var command = new SqlCommand(Locacao.sp_BuscarLocacao, connection);
+                var reader = await command.ExecuteReaderAsync();
+
+                while (reader.Read())
+                {
+                    var dataPrevista = reader.GetDateTime(3).Day - reader.GetDateTime(2).Day;
+
+                    var locacao = new Locacao(
+                        reader.GetInt32(0),
+                        reader.GetInt32(1),
+                        dataPrevista,
+                        reader.GetDecimal(5)
+                    );
+
+                    if (!reader.IsDBNull(4))
+                        locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(4));
+
+                    locacao.SetDataLocacao(reader.GetDateTime(2));
+                    locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(8)));
+                    locacoes.Add(locacao);
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao listar locacoes: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao listar locacoes: " + ex.Message);
+            }
+
+            return locacoes ?? throw new Exception("Nao foi possivel localizar a locacao!");
+        }
     }
 
-    public Task ExcluirLocacao(int locacaoId)
+    public async Task CancelarLocacao(int locacaoId)
     {
-        throw new NotImplementedException();
+        var locacao = BuscarLocacaoId(locacaoId).Result ?? throw new Exception("Locacao nao foi encontrada");
+
+        if (locacao.Status == EStatus.Cancelada)
+            throw new Exception("Locacao ja esta cancelada");
+        
+        await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+        {
+            await connection.OpenAsync();
+
+            await using var transaction = connection.BeginTransaction();
+            {
+                try
+                {
+                    var command = new SqlCommand(Locacao.sp_CancelarLocacao, connection, transaction);
+                    command.Parameters.AddWithValue("@idLocacao", locacaoId);
+                    command.Parameters.AddWithValue("@Status", EStatus.Cancelada);
+
+                    await command.ExecuteNonQueryAsync();
+                    await transaction.CommitAsync();
+
+                    Console.WriteLine("Locacao cancelada com sucesso!");
+                }
+                catch (SqlException ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception("Erro ao Cancelar Locacao: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception("Erro inesperado ao Cancelar Locacao: " + ex.Message);
+                }
+            }
+        }
     }
 }

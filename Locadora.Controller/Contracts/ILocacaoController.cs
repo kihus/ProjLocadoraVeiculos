@@ -9,9 +9,9 @@ public interface ILocacaoController
     
     public Task AtualizarLocacao(int idLocacao, DateTime dataDevolucaoReal, EStatus status);
     
-    public Task<Locacao> LocalizarLocacaoId(int locacaoId);
+    public Task<Locacao> BuscarLocacaoId(int locacaoId);
     
     public Task<List<Locacao>> ListarLocacao();
     
-    public Task ExcluirLocacao(int locacaoId);
+    public Task CancelarLocacao(int locacaoId);
 }

@@ -31,6 +31,12 @@ public class Locacao(
     public readonly static string sp_BuscarLocacaoId =
         "EXEC sp_BuscarLocacaoId @idLocacao";
     
+     public readonly static string sp_BuscarLocacao =
+            "EXEC sp_BuscarLocacao";
+     
+     public readonly static string sp_CancelarLocacao =
+         "EXEC sp_CancelarLocacao @idLocacao, @Status";
+    
     public void SetVeiculoNome(string nome)
         => VeiculoNome = nome; 
 
@@ -55,10 +61,10 @@ public class Locacao(
                $"Veiculo: {VeiculoNome}\n" +
                $"Data locacao: {DataLocacao}\n" +
                $"Data prevista: {DataDevolucaoPrevista}\n" +
-               $"{(DataDevolucaoReal is null ? "" : "Data locacao real: " + DataDevolucaoReal)}\n" +
-               $"{(Multa is null ? "" : "Multa: " + Multa)}\n" +
+               $"{(DataDevolucaoReal is null ? "" : $"Data devolucao real: {DataDevolucaoReal}\n")}" +
+               $"{(Multa is null ? "" : $"Multa: {Multa}\n")}" +
                $"Valor diaria: {ValorDiaria}\n" +
                $"Valor total: {ValorTotal}\n" +
-               $"Status: {Status}";
+               $"Status: {Status}\n";
     }
 }
