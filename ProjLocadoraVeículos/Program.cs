@@ -24,7 +24,6 @@ try
         .OrderBy(x => x.Nome)
         .ToList()
         .ForEach(x => Console.WriteLine(x));
-    
 }
 catch (Exception ex)
 {
@@ -62,17 +61,33 @@ var veiculoController = new VeiculoController();
 try
 {
     await veiculoController.AdicionarVeiculo(veiculo);
-    
+
     Console.WriteLine(await veiculoController.BuscarVeiculoPlaca(veiculo.Placa));
-    
+
     await veiculoController.UpdateVeiculo(EStatusVeiculo.Reservado, "MNO7890");
-    
+
     await veiculoController.ExcluirVeiculo(8);
-    
+
     veiculoController
         .ListarVeiculos()
         .Result
         .ForEach(x => Console.WriteLine(x));
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
+
+// CRUD Locacao
+var locacao = new Locacao(1, 1, 7, 189.99m);
+var locacaoController = new LocacaoController();
+
+try
+{
+    await locacaoController.AdicionarLocacao(locacao);
+    await locacaoController.AtualizarLocacao(7, DateTime.Parse("11/30/2025"), EStatus.Concluida);
+    locacaoController.ListarLocacao().Result.ToList().ForEach(x => Console.WriteLine(x));
+    await locacaoController.CancelarLocacao(8);
 }
 catch (Exception ex)
 {
