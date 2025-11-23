@@ -32,7 +32,6 @@ public class ClienteController
 					await documentoController.AdicionarDocumento(documento, connection, transaction);
 					
 					await transaction.CommitAsync();
-					Console.WriteLine("Deu certo");
 				}
 				catch (SqlException ex)
 				{
@@ -48,7 +47,7 @@ public class ClienteController
 		}
 	}
 	
-	public async Task<List<Cliente>> ListarTodosCliente()
+	public async Task<List<Cliente>> ListarTodosClientes()
 	{
 		await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
 		
@@ -60,7 +59,8 @@ public class ClienteController
 				await connection.OpenAsync();
 				var command = new SqlCommand(Cliente.SELECT_CLIENTE, connection);
 
-				var reader = await command.ExecuteReaderAsync() ?? throw new Exception("Cliente não encontrado");
+				var reader = await command.ExecuteReaderAsync() 
+				             ?? throw new Exception("Cliente não encontrado");
 
 				while (reader.Read())
 				{
@@ -237,8 +237,6 @@ public class ClienteController
 					await command.ExecuteNonQueryAsync();
 					
 					await transaction.CommitAsync();
-					
-					Console.WriteLine("Cliente excluido com sucesso!");
 				}
 				catch (SqlException ex)
 				{

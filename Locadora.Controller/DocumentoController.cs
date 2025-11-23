@@ -1,6 +1,5 @@
 ﻿using Locadora.Models;
 using Microsoft.Data.SqlClient;
-using Utils.Databases;
 
 namespace Locadora.Controller;
 

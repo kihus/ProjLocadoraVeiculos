@@ -46,7 +46,7 @@ public class VeiculoController : IVeiculoController
         }
     }
 
-    public async Task UpdateVeiculo(EStatusVeiculo statusVeiculo, string placa)
+    public async Task AtualizarStatusVeiculo(EStatusVeiculo statusVeiculo, string placa)
     {
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {

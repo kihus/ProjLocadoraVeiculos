@@ -7,7 +7,7 @@ public interface IVeiculoController
 {
     public Task AdicionarVeiculo(Veiculo veiculo);
 
-    public Task UpdateVeiculo(EStatusVeiculo statusVeiculo, string placa);
+    public Task AtualizarStatusVeiculo(EStatusVeiculo statusVeiculo, string placa);
 
     public Task<List<Veiculo>> ListarVeiculos();
 

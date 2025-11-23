@@ -2,7 +2,7 @@
 
 public enum EStatusVeiculo
 {
-    Disponível,
+    Disponivel,
     Alugado,
     Manutencao,
     Reservado
