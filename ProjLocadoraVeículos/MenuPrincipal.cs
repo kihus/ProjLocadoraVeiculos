@@ -3,6 +3,7 @@ using Locadora.View.Categorias;
 using Utils;
 using Locadora.View.Veiculos;
 using Locadora.View.Funcionarios;
+using Locadora.View.Locadora;
 
 namespace Locadora.View
 {
@@ -88,6 +89,8 @@ namespace Locadora.View
                         break;
                     
                     case "4":
+                        var locadora = new MenuLocacao();
+                        await locadora.MenuDeLocacao();
                         break;
                     
                     case "0":

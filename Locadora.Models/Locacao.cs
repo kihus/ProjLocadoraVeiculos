@@ -14,7 +14,7 @@ public class Locacao(
     public string ClienteNome { get; private set; }
     public int VeiculoId { get; private set; } = veiculoId;
     public string VeiculoNome { get; private set; }
-    public DateTime DataLocacao { get; private set; }
+    public DateTime DataLocacao { get; private set; } = DateTime.Now;
     public DateTime DataDevolucaoPrevista { get; private set; } = DateTime.Now.AddDays(diasLocacao);
     public DateTime? DataDevolucaoReal { get; private set; }
     public decimal ValorDiaria { get; private set; } = valorDiaria;
@@ -40,7 +40,7 @@ public class Locacao(
     
     public void SetVeiculoNome(string nome)
         => VeiculoNome = nome; 
-
+    
     public void SetClienteNome(string nome)
         =>  ClienteNome = nome;
     

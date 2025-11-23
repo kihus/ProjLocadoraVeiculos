@@ -7,11 +7,11 @@ public interface ILocacaoController
 {
     public Task AdicionarLocacao(Locacao locacao);
     
-    public Task AtualizarLocacao(int idLocacao, DateTime dataDevolucaoReal, EStatus status);
+    public Task FinalizarLocacao(Guid idLocacao, DateTime dataDevolucaoReal, EStatus status);
     
-    public Task<Locacao> BuscarLocacaoId(int locacaoId);
+    public Task<Locacao> BuscarLocacaoId(Guid locacaoId);
     
     public Task<List<Locacao>> ListarLocacao();
     
-    public Task CancelarLocacao(int locacaoId);
+    public Task CancelarLocacao(Guid locacaoId);
 }

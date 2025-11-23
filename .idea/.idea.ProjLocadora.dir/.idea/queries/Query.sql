@@ -86,33 +86,6 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER PROCEDURE sp_AdicionarLocacao @ClienteIdLocacao INT,
-                                              @VeiculoIdLocacao INT,
-                                              @DataDevolucaoPrevistaLocacao DATETIME,
-                                              @DataDevolucaoRealLocacao DATETIME NULL,
-                                              @ValorDiariaLocacao DECIMAL(10, 2),
-                                              @ValorTotalLocacao DECIMAL(10, 2),
-                                              @MultaLocacao DECIMAL(10, 2) NULL,
-                                              @StatusLocacao VARCHAR(20) NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    BEGIN TRY
-        INSERT INTO tblLocacoes (ClienteID, VeiculoID, DataDevolucaoPrevista, DataDevolucaoReal, ValorDiaria,
-                                 ValorTotal, Multa, Status)
-        VALUES (@ClienteIdLocacao, @VeiculoIdLocacao, @DataDevolucaoPrevistaLocacao,
-                @DataDevolucaoRealLocacao, @ValorDiariaLocacao,
-                @ValorTotalLocacao, @MultaLocacao, @StatusLocacao);
-
-        PRINT 'Locacao adicionada com sucesso!'
-    END TRY
-    BEGIN CATCH
-        PRINT 'Erro ao adicionar locacao' + ERROR_MESSAGE();
-        THROW;
-    END CATCH
-END
-GO
 
 CREATE OR ALTER PROCEDURE sp_AtualizarLocacao @idLocacao INT,
                                               @DataDevolucaoReal DATETIME,

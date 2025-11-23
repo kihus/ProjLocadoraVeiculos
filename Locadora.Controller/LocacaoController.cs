@@ -24,7 +24,7 @@ public class LocacaoController : ILocacaoController
                     command.Parameters.AddWithValue("@VeiculoId", locacao.VeiculoId);
                     command.Parameters.AddWithValue("@DataDevolucaoPrevista", locacao.DataDevolucaoPrevista);
                     command.Parameters.AddWithValue("@DataDevolucaoReal",
-                        locacao.DataDevolucaoReal ?? (object)DBNull.Value);
+                        locacao.DataDevolucaoReal ?? (object) DBNull.Value);
                     command.Parameters.AddWithValue("@ValorDiaria", locacao.ValorDiaria);
                     command.Parameters.AddWithValue("@ValorTotal", locacao.ValorTotal);
                     command.Parameters.AddWithValue("@Multa", locacao.Multa);
@@ -32,24 +32,22 @@ public class LocacaoController : ILocacaoController
 
                     await command.ExecuteNonQueryAsync();
                     await transaction.CommitAsync();
-
-                    Console.WriteLine("Locacao adicionada com sucesso!");
                 }
                 catch (SqlException ex)
                 {
                     await transaction.RollbackAsync();
-                    throw new Exception("Erro ao adicionar cliente: " + ex.Message);
+                    throw new Exception("Erro ao adicionar locacao: " + ex.Message);
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    throw new Exception("Erro inesperado ao adicionar cliente: " + ex.Message);
+                    throw new Exception("Erro inesperado ao adicionar locacao: " + ex.Message);
                 }
             }
         }
     }
 
-    public async Task AtualizarLocacao(int idLocacao, DateTime dataDevolucaoReal, EStatus status)
+    public async Task FinalizarLocacao(Guid idLocacao, DateTime dataDevolucaoReal, EStatus status)
     {
         var locacao = BuscarLocacaoId(idLocacao).Result;
         var dataDevolucao = dataDevolucaoReal.Day - locacao.DataDevolucaoPrevista.Day;
@@ -75,8 +73,6 @@ public class LocacaoController : ILocacaoController
 
                     await command.ExecuteNonQueryAsync();
                     await transaction.CommitAsync();
-
-                    Console.WriteLine("Locacao atualizada com sucesso!");
                 }
                 catch (SqlException ex)
                 {
@@ -92,7 +88,7 @@ public class LocacaoController : ILocacaoController
         }
     }
 
-    public async Task<Locacao> BuscarLocacaoId(int locacaoId)
+    public async Task<Locacao> BuscarLocacaoId(Guid locacaoId)
     {
         Locacao locacao = null;
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -148,20 +144,20 @@ public class LocacaoController : ILocacaoController
 
                 while (reader.Read())
                 {
-                    var dataPrevista = reader.GetDateTime(3).Day - reader.GetDateTime(2).Day;
+                    var dataPrevista = reader.GetDateTime(4).Day - reader.GetDateTime(3).Day;
 
                     var locacao = new Locacao(
-                        reader.GetInt32(0),
                         reader.GetInt32(1),
+                        reader.GetInt32(2),
                         dataPrevista,
-                        reader.GetDecimal(5)
+                        reader.GetDecimal(6)
                     );
 
-                    if (!reader.IsDBNull(4))
-                        locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(4));
+                    if (!reader.IsDBNull(5))
+                        locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(5));
 
-                    locacao.SetDataLocacao(reader.GetDateTime(2));
-                    locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(8)));
+                    locacao.SetDataLocacao(reader.GetDateTime(3));
+                    locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(9)));
                     locacoes.Add(locacao);
                 }
             }
@@ -178,9 +174,10 @@ public class LocacaoController : ILocacaoController
         }
     }
 
-    public async Task CancelarLocacao(int locacaoId)
+    public async Task CancelarLocacao(Guid locacaoId)
     {
-        var locacao = BuscarLocacaoId(locacaoId).Result ?? throw new Exception("Locacao nao foi encontrada");
+        var locacao = BuscarLocacaoId(locacaoId).Result 
+                      ?? throw new Exception("Locacao nao foi encontrada");
 
         if (locacao.Status == EStatus.Cancelada)
             throw new Exception("Locacao ja esta cancelada");

@@ -17,4 +17,8 @@
       <ProjectReference Include="..\Utils\Utils.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Locadora\CancelarLocacao.cs" />
+    </ItemGroup>
+
 </Project>
