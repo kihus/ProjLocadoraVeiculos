@@ -36,7 +36,7 @@ public class FinalizarLocacao
             {
                 Console.Write("Deseja mesmo cancelar? (s/n) ");
                 var resultado = Console.ReadLine() ?? "".ToLower();
-                while (resultado is "n" or "s")
+                while (resultado is not ("n" or "s"))
                 {
                     Console.WriteLine("Digite corretamente!");
                     Console.WriteLine("Deseja mesmo criar locação? (s/n) ");
@@ -56,7 +56,7 @@ public class FinalizarLocacao
             {
                 Console.Write("Deseja mesmo concluir? (s/n) ");
                 var resultado = Console.ReadLine() ?? "".ToLower();
-                while (resultado is "n" or "s")
+                while (resultado is not ("n" or "s"))
                 {
                     Console.WriteLine("Digite corretamente!");
                     Console.WriteLine("Deseja mesmo criar locação? (s/n) ");

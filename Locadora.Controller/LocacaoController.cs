@@ -30,6 +30,9 @@ public class LocacaoController : ILocacaoController
                     command.Parameters.AddWithValue("@Multa", locacao.Multa);
                     command.Parameters.AddWithValue("@Status", locacao.Status);
 
+                    locacao.SetClienteNome(reader.GetInt32(1));
+                    locacao.SetVeiculoNome(reader.GetInt32(2));
+
                     await command.ExecuteNonQueryAsync();
                     await transaction.CommitAsync();
                 }
@@ -71,6 +74,9 @@ public class LocacaoController : ILocacaoController
                     command.Parameters.AddWithValue("@Status", locacao.Status);
                     command.Parameters.AddWithValue("@Multa", locacao.Multa);
 
+                    locacao.SetClienteNome(reader.GetInt32(1));
+                    locacao.SetVeiculoNome(reader.GetInt32(2));
+
                     await command.ExecuteNonQueryAsync();
                     await transaction.CommitAsync();
                 }
@@ -102,20 +108,23 @@ public class LocacaoController : ILocacaoController
 
                 while (reader.Read())
                 {
-                    var dataPrevista = reader.GetDateTime(3).Day - reader.GetDateTime(2).Day;
+                    var dataPrevista = reader.GetDateTime(4).Day - reader.GetDateTime(3).Day;
 
                     locacao = new Locacao(
-                        reader.GetInt32(0),
                         reader.GetInt32(1),
+                        reader.GetInt32(2),
                         dataPrevista,
-                        reader.GetDecimal(5)
+                        reader.GetDecimal(6)
                     );
 
-                    if (!reader.IsDBNull(4))
-                        locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(4));
-                    
-                    locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(8)));
-                    locacao.SetDataLocacao(reader.GetDateTime(2));
+                    if (!reader.IsDBNull(5))
+                        locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(5));
+
+                    locacao.SetClienteNome(reader.GetInt32(1));
+                    locacao.SetVeiculoNome(reader.GetInt32(2));
+
+                    locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(9)));
+                    locacao.SetDataLocacao(reader.GetDateTime(3));
                 }
             }
             catch (SqlException ex)
@@ -154,8 +163,17 @@ public class LocacaoController : ILocacaoController
                     );
 
                     if (!reader.IsDBNull(5))
+                    {
                         locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(5));
+                        var devolucaoReal = (DateTime)reader.GetValue(5);
+                        var dataDevolucao = devolucaoReal.Day - locacao.DataDevolucaoPrevista.Day;
 
+                        if (dataDevolucao > 0)
+                            locacao.SetMulta(dataDevolucao * locacao.ValorDiaria);
+                    }
+
+                    locacao.SetClienteNome(reader.GetInt32(1));
+                    locacao.SetVeiculoNome(reader.GetInt32(2));
                     locacao.SetDataLocacao(reader.GetDateTime(3));
                     locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(9)));
                     locacoes.Add(locacao);

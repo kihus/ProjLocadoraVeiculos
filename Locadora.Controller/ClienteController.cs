@@ -217,6 +217,36 @@ public class ClienteController
         }
     }
 
+    public async Task<string> BuscarClienteId(int idCliente)
+    {
+        string nomeCliente;   
+        await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+        {
+            try
+            {
+                await connection.OpenAsync();
+
+                var command = new SqlCommand(Cliente.SELECT_CLIENTE_ID, connection);
+
+                var reader = await command.ExecuteReaderAsync();
+
+                while (reader.Read())
+                {
+                    nomeCliente = reader.GetString(0);
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro ao buscar cliente: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro inesperado ao buscar cliente: " + ex.Message);
+            }
+        }
+        return nomeCliente ?? throw new Exception("Cliente não encontrado");
+    }
+
     public async Task ExcluirCliente(string email)
     {
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());

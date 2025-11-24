@@ -198,6 +198,37 @@ public class VeiculoController : IVeiculoController
             }
         }
     }
+
+    public async Task<string> BuscarVeiculoNome(int idVeiculo)
+    {
+        string modeloVeiculo;
+        await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
+        {
+            try
+            {
+                await connection.OpenAsync();
+
+                var command = new SqlCommand(Veiculo.SELECT_VEICULO_NOME, connection);
+
+                var reader = await command.ExecuteReaderAsync();
+                while (reader.Read())
+                {
+                    modeloVeiculo = reader.GetString(0);
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Erro ao buscar veiculo: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro inesperado ao buscar veiculo: " + ex.Message);
+            }
+        }
+
+        return modeloVeiculo ?? throw new Exception("Não foi encontrado nenhum veiculo com esse id!");
+    }
+
     public async Task ExcluirVeiculo(int idVeiculo)
     {
 

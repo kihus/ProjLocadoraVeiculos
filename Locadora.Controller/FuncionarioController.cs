@@ -169,7 +169,7 @@ public class FuncionarioController : IFuncionarioController
                                     reader["Nome"].ToString(),
                                     reader["CPF"].ToString(),
                                     reader["Email"].ToString(),
-                                    reader.GetDecimal(4)
+                                    reader.GetDecimal(3)
                                 )
                             );
                         }
