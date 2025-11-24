@@ -41,7 +41,7 @@ public class CategoriaController
     {
         categoria.SetCategoriaId(BuscarCategoria(categoria.Nome).Result);
 
-        if (categoria.CategoriaId == 0)
+        if (categoria.CategoriaId is 0)
             throw new Exception("Categoria não encontrada!");
 
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
@@ -78,7 +78,7 @@ public class CategoriaController
         }
     }
 
-    private async Task<int> BuscarCategoria(string nome)
+    public async Task<int> BuscarCategoria(string nome)
     {
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
@@ -106,6 +106,43 @@ public class CategoriaController
             catch (Exception ex)
             {
                 throw new Exception("Erro inesperado ao buscar categoria: " + ex.Message);
+            }
+        }
+    }
+    
+    public async Task<decimal> BuscarDiariaCategoriaPorId(int id)
+    {
+        await using (var connection = new SqlConnection(ConnectionDB.GetConnectionString()))
+        {
+            await connection.OpenAsync();
+            try
+            {
+                await using (var command = new SqlCommand(Categoria.SELECTVALORDIARIAPORID, connection))
+                {
+                    command.Parameters.AddWithValue("@IdCategoria", id);
+                    var reader = command.ExecuteReader();
+                    using (reader)
+                    {
+                        var diaria = 0.0m;
+                        if (reader.Read())
+                        {
+                            diaria = reader.GetDecimal(0);
+                        }
+                        return diaria;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erro do tipo SQL ao tentar buscar nome categoria: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro do tipo genérico ao tentar buscar nome categoria: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
             }
         }
     }

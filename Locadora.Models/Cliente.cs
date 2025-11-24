@@ -11,6 +11,10 @@ public class Cliente (
 		"SELECT c.Nome, c.Email, c.Telefone,d.TipoDocumento, d.Numero, d.DataEmissao, d.DataValidade FROM tblClientes c JOIN tblDocumentos d ON c.ClienteID = d.ClienteID";
 	public static readonly string SELECT_CLIENTE_EMAIL = 
 		"SELECT c.ClienteID, c.Nome, c.Email, c.Telefone, d.TipoDocumento, d.Numero, d.DataEmissao, d.DataValidade FROM tblClientes c JOIN tblDocumentos d ON c.ClienteID = d.ClienteID WHERE Email = @Email";
+
+	public static readonly string SELECT_CLIENTE_ID =
+		"EXEC sp_BuscarClienteId @idCliente;";
+
 	public static readonly string UPDATE_CLIENTE = 
 		"UPDATE tblClientes SET Telefone = @Telefone WHERE ClienteID = @idCliente";
 	public static readonly string DELETE_CLIENTE = 

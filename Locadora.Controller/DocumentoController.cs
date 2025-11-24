@@ -1,6 +1,5 @@
 ﻿using Locadora.Models;
 using Microsoft.Data.SqlClient;
-using Utils.Databases;
 
 namespace Locadora.Controller;
 
@@ -19,7 +18,6 @@ public class DocumentoController
             command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
 
             await command.ExecuteNonQueryAsync();
-            Console.WriteLine("Documento adicionado com sucesso");
         }
         catch (SqlException ex)
         {

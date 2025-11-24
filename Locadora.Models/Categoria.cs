@@ -25,8 +25,11 @@ public class Categoria(
     public static readonly string SELECT_ALL_CATEGORIA =
         "SELECT Nome, Descricao, Diaria FROM tblCategorias";
     
-    public static readonly string DELETE_CATEGORIA =
+    public static readonly string DELETE_CATEGORIA =     
         "EXEC sp_ExcluirCategoria @CategoriaId";
+    
+    public static readonly string SELECTVALORDIARIAPORID 
+        = @"SELECT Diaria FROM tblCategorias WHERE CategoriaID = @IdCategoria";
 
     public Categoria(string nome, string? descricao, decimal diaria) : this(nome, diaria)
     {

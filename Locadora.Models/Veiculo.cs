@@ -31,6 +31,9 @@ public class Veiculo(
     
     public readonly static string SELECT_VEICULO_ID = 
         "SELECT VeiculoId FROM tblVeiculos WHERE VeiculoId = @VeiculoId";
+
+    public readonly static string SELECT_VEICULO_NOME =
+        "EXEC sp_BuscarVeiculoId @idVeiculo;";
     
     public readonly static string UPDATE_STATUS_VEICULO =
         "UPDATE tblVeiculos SET StatusVeiculo = @StatusVeiculo WHERE Placa = @Placa;";

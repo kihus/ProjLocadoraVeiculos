@@ -11,6 +11,21 @@ public class Funcionario(
     public string Cpf { get; private set; } = cpf;
     public string Email { get; private set; } = email;
     public decimal? Salario { get; private set; }
+    
+    public readonly static string INSERTFUNCIONARIO = 
+        @"INSERT INTO tblFuncionarios (Nome,CPF,Email,Salario) VALUES (@Nome,@CPF,@Email,@Salario);";
+    
+    public readonly static string SELECTFUNCIONARIOPORCPF = 
+        @"SELECT FuncionarioID,Nome,CPF,Email,Salario FROM tblFuncionarios WHERE FuncionarioID = @idFuncionario;";
+    
+    public readonly static string SELECTTODOSFUNCIONARIOS = 
+        @"SELECT Nome, CPF,Email,Salario FROM tblFuncionarios;";
+    
+    public readonly static string UPDATEFUNCIONARIOPORCPF = 
+        @"UPDATE tblFuncionarios SET Salario = @Salario WHERE FuncionarioID = @idFuncionario;";
+    
+    public readonly static string DELETEFUNCIONARIOPORCPF = 
+        @"DELETE FROM tblFuncionarios WHERE FuncionarioID = @idFuncionario;";
 
     public Funcionario(
         string nome, 
