@@ -18,18 +18,12 @@ namespace Locadora.View.Categorias
                 Console.Write("\nDigite a descrição da categoria: ");
                 var descricaoCategoria = Console.ReadLine();
 
-                Console.Write("\nDigite o valor da diária: ");
-                if (!decimal.TryParse(Console.ReadLine(), out var valorDiaria))
-                {
-                    Console.WriteLine("Digite um valor correto!");
-                    return;
-                }
+                var valorDiaria = Helpers.LerDecimal("Digite o valor da diária: ");
 
                 var categoria = new Categoria(
                     nomeCategoria,
                     descricaoCategoria,
                     valorDiaria
-                    
                 );
 
                 await categoriaController.AdicionarCategoria(categoria);

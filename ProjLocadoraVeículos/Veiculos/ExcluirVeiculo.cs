@@ -19,8 +19,8 @@ namespace Locadora.View.Veiculos
                 Console.WriteLine("Insira a placa do veículo que deseja excluir:");
                 var placa = Console.ReadLine() ?? "";
 
-                var idVeiculo = veiculoController.BuscarVeiculoPlaca(placa).Result.VeiculoId;
-                await veiculoController.ExcluirVeiculo(idVeiculo);
+                var veiculo = veiculoController.BuscarVeiculoPlaca(placa).Result;
+                await veiculoController.ExcluirVeiculo(veiculo.VeiculoId);
                 
                 Console.WriteLine("\nVeículo deletado com sucesso!");
             }

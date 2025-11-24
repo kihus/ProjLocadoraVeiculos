@@ -2,8 +2,8 @@
 
 public enum EStatusVeiculo
 {
-    Disponivel,
-    Alugado,
-    Manutencao,
-    Reservado
+    Disponivel = 0,
+    Alugado = 1,
+    Manutencao = 2,
+    Reservado = 3
 }

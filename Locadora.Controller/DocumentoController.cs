@@ -18,7 +18,6 @@ public class DocumentoController
             command.Parameters.AddWithValue("@DataValidade", documento.DataValidade);
 
             await command.ExecuteNonQueryAsync();
-            Console.WriteLine("Documento adicionado com sucesso");
         }
         catch (SqlException ex)
         {

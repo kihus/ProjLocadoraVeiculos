@@ -11,7 +11,7 @@ namespace Locadora.View.Categorias
             {
                 Console.Clear();
                 var categorias = categoriaController.ListarTodasCategorias().Result;
-                if (categorias.Count > 0)
+                if (categorias.Count is 0)
                     throw new Exception("Não há categorias registradas no sistema!");
 
                 Console.WriteLine("======= LISTA DE CATEGORIAS =======");

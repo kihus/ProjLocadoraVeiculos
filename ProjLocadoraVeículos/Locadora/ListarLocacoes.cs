@@ -17,7 +17,7 @@ public class ListarLocacoes
                 throw new Exception("Não há locações registradas no sistema!");
 
             Console.WriteLine("======= LISTA DE LOCAÇÕES =======");
-            foreach (var locacao in locacoes)
+            foreach (var locacao in locacoes.OrderBy(x => x.Status))
             {
                 Console.WriteLine(locacao);
             }

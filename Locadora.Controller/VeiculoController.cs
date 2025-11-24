@@ -82,10 +82,10 @@ public class VeiculoController : IVeiculoController
     public async Task<List<Veiculo>> ListarVeiculos()
     {
         var veiculos = new List<Veiculo>();
-
+        var categoriaController = new CategoriaController();
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
-            var categoriaController = new CategoriaController();
+           
             try
             {
                 await connection.OpenAsync();
@@ -151,6 +151,7 @@ public class VeiculoController : IVeiculoController
 
                     var categoria = categoriaController.BuscarCategoriaNome(reader.GetInt32(1)).Result;
                     veiculo.SetCategoria(categoria);
+                    veiculo.SetVeiculoId(reader.GetInt32(0));
                 }
             }
             catch (SqlException ex)
@@ -183,7 +184,7 @@ public class VeiculoController : IVeiculoController
 
                 while (reader.Read())
                 {
-                    id = Convert.ToInt32(reader["VeiculoId"]);
+                    id = reader.GetInt32(0);
                 }
                 
                 return id;
@@ -201,7 +202,7 @@ public class VeiculoController : IVeiculoController
 
     public async Task<string> BuscarVeiculoNome(int idVeiculo)
     {
-        string modeloVeiculo;
+        string modeloVeiculo = null;
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
             try
@@ -209,6 +210,7 @@ public class VeiculoController : IVeiculoController
                 await connection.OpenAsync();
 
                 var command = new SqlCommand(Veiculo.SELECT_VEICULO_NOME, connection);
+                command.Parameters.AddWithValue("@idVeiculo", idVeiculo);
 
                 var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())

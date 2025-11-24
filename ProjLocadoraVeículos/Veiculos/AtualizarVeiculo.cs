@@ -48,9 +48,11 @@ namespace Locadora.View.Veiculos
 
                 Console.WriteLine("Digite a placa do veículo que deseja atualizar:");
                 var placa = Console.ReadLine() ?? "";
+                var veiculo = veiculoController.BuscarVeiculoPlaca(placa).Result
+                              ?? throw new Exception("Veiculo nao encontrado");
 
                 var status = SelecionarStatus();
-                await veiculoController.AtualizarStatusVeiculo(status, placa);
+                await veiculoController.AtualizarStatusVeiculo(status, veiculo.Placa);
 
                 Console.WriteLine("\nVeículo atualizado com sucesso!");
             }

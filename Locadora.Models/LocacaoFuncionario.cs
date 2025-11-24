@@ -15,7 +15,7 @@ public class LocacaoFuncionario
 
     public readonly static string DELETE = @"
             DELETE FROM tblLocacaoFuncionarios
-            WHERE LocacaoFuncionarioID = @LocacaoFuncionarioID;";
+            WHERE LocacaoID =  @idLocacao";
 
     public readonly static string SELECT_BY_LOCACAO = @"
             SELECT lf.LocacaoFuncionarioID, lf.LocacaoID, lf.FuncionarioID, f.Nome, f.Email, f.Salario

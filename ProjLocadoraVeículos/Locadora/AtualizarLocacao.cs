@@ -4,9 +4,9 @@ using Utils;
 
 namespace Locadora.View.Locadora;
 
-public class FinalizarLocacao
+public class AtualizarLocacao
 {
-    public async Task AtualizarLocacao(LocacaoController locacaoController)
+    public async Task FinalizarLocacao(LocacaoController locacaoController)
     {
         try
         {

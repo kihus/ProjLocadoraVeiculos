@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <Compile Remove="Locadora\CancelarLocacao.cs" />
+      <Compile Remove="Locadora\RemoverLocacao.cs" />
     </ItemGroup>
 
 </Project>

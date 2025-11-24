@@ -23,17 +23,15 @@ namespace Locadora.View.Clientes
 
                 Console.Clear();
                 Console.WriteLine("======= DOCUMENTO DO CLIENTE =======");
-                Console.Write("Digite o tipo de documento do cliente:");
+                Console.WriteLine("Digite o tipo de documento do cliente: ");
                 var tipoDocumento = Console.ReadLine() ?? "";
-
-                Console.Write("\nDigite o número de documento do cliente:");
-                var numeroDocumento = Console.ReadLine() ?? "";
-
-                Console.Write("\nDigite a data de emissão do documento:");
+                var numeroDocumento = Helpers.SolicitarNumeroDocumento(tipoDocumento);
+                
+                Console.Write("\nDigite a data de emissão do documento: ");
                 if(!DateOnly.TryParse(Console.ReadLine(), out var dataEmissao))
                     throw new Exception("Digite a data corretamente");
                 
-                Console.Write("\nDigite a data de validade do documento:");
+                Console.Write("\nDigite a data de validade do documento: ");
                 if(!DateOnly.TryParse(Console.ReadLine(), out var dataValidade))
                     throw new Exception("Digite a data corretamente");
 

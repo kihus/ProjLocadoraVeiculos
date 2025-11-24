@@ -1,4 +1,5 @@
-﻿using Locadora.Controller.Contracts;
+﻿using System.Data.SqlTypes;
+using Locadora.Controller.Contracts;
 using Locadora.Models;
 using Locadora.Models.Enums;
 using Microsoft.Data.SqlClient;
@@ -8,7 +9,10 @@ namespace Locadora.Controller;
 
 public class LocacaoController : ILocacaoController
 {
-    public async Task AdicionarLocacao(Locacao locacao)
+    private ClienteController _clienteController = new();
+    private VeiculoController _veiculoController = new();
+    
+    public async Task AdicionarLocacao(Locacao locacao, int idFuncionario)
     {
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
@@ -29,10 +33,8 @@ public class LocacaoController : ILocacaoController
                     command.Parameters.AddWithValue("@ValorTotal", locacao.ValorTotal);
                     command.Parameters.AddWithValue("@Multa", locacao.Multa);
                     command.Parameters.AddWithValue("@Status", locacao.Status);
-
-                    locacao.SetClienteNome(reader.GetInt32(1));
-                    locacao.SetVeiculoNome(reader.GetInt32(2));
-
+                    command.Parameters.AddWithValue("@idFuncionario", idFuncionario);
+                    
                     await command.ExecuteNonQueryAsync();
                     await transaction.CommitAsync();
                 }
@@ -73,10 +75,7 @@ public class LocacaoController : ILocacaoController
                     command.Parameters.AddWithValue("@DataDevolucaoReal", dataDevolucaoReal);
                     command.Parameters.AddWithValue("@Status", locacao.Status);
                     command.Parameters.AddWithValue("@Multa", locacao.Multa);
-
-                    locacao.SetClienteNome(reader.GetInt32(1));
-                    locacao.SetVeiculoNome(reader.GetInt32(2));
-
+                    
                     await command.ExecuteNonQueryAsync();
                     await transaction.CommitAsync();
                 }
@@ -97,8 +96,10 @@ public class LocacaoController : ILocacaoController
     public async Task<Locacao> BuscarLocacaoId(Guid locacaoId)
     {
         Locacao locacao = null;
+        
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
+            
             await connection.OpenAsync();
             try
             {
@@ -119,9 +120,12 @@ public class LocacaoController : ILocacaoController
 
                     if (!reader.IsDBNull(5))
                         locacao.SetDataDevolucaoReal((DateTime)reader.GetValue(5));
-
-                    locacao.SetClienteNome(reader.GetInt32(1));
-                    locacao.SetVeiculoNome(reader.GetInt32(2));
+            
+                    var nome = _clienteController.BuscarClienteId(reader.GetInt32(1)).Result;
+                    var modelo = _veiculoController.BuscarVeiculoNome(reader.GetInt32(2)).Result;
+                    
+                    locacao.SetClienteNome(nome);
+                    locacao.SetVeiculoNome(modelo);
 
                     locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(9)));
                     locacao.SetDataLocacao(reader.GetDateTime(3));
@@ -171,9 +175,13 @@ public class LocacaoController : ILocacaoController
                         if (dataDevolucao > 0)
                             locacao.SetMulta(dataDevolucao * locacao.ValorDiaria);
                     }
+                    var nome = _clienteController.BuscarClienteId(reader.GetInt32(1)).Result;
+                    var modelo = _veiculoController.BuscarVeiculoNome(reader.GetInt32(2)).Result;
 
-                    locacao.SetClienteNome(reader.GetInt32(1));
-                    locacao.SetVeiculoNome(reader.GetInt32(2));
+                    locacao.SetLocacaoId(reader.GetGuid(0));
+                    locacao.SetClienteNome(nome);
+                    locacao.SetVeiculoNome(modelo);
+                    
                     locacao.SetDataLocacao(reader.GetDateTime(3));
                     locacao.SetStatus(Enum.Parse<EStatus>(reader.GetString(9)));
                     locacoes.Add(locacao);

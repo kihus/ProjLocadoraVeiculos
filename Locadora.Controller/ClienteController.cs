@@ -219,7 +219,7 @@ public class ClienteController
 
     public async Task<string> BuscarClienteId(int idCliente)
     {
-        string nomeCliente;   
+        string nomeCliente = null;   
         await using var connection = new SqlConnection(ConnectionDB.GetConnectionString());
         {
             try
@@ -227,6 +227,7 @@ public class ClienteController
                 await connection.OpenAsync();
 
                 var command = new SqlCommand(Cliente.SELECT_CLIENTE_ID, connection);
+                command.Parameters.AddWithValue("@idCliente", idCliente);
 
                 var reader = await command.ExecuteReaderAsync();
 

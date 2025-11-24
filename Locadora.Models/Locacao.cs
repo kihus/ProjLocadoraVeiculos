@@ -1,5 +1,4 @@
 ﻿using Locadora.Models.Enums;
-using Locadora.Controller;
 
 namespace Locadora.Models;
 
@@ -10,8 +9,6 @@ public class Locacao(
     decimal valorDiaria
     )
 {
-    private ClienteController _clienteController;
-    private VeiculoController _veiculoController;
 
     public Guid LocacaoId { get; private set; }
     public int ClienteId { get; private set; } = clienteId;
@@ -27,7 +24,7 @@ public class Locacao(
     public EStatus Status { get; private set; } = EStatus.Ativa;
 
     public readonly static string sp_AdicionarLocacao =
-        "EXEC sp_AdicionarLocacao @ClienteId, @VeiculoId, @DataDevolucaoPrevista, @DataDevolucaoReal, @ValorDiaria, @ValorTotal, @Multa, @Status; SELECT SCOPE_IDENTITY();";
+        "EXEC sp_AdicionarLocacao @ClienteId, @VeiculoId, @DataDevolucaoPrevista, @DataDevolucaoReal, @ValorDiaria, @ValorTotal, @Multa, @Status, @idFuncionario;";
 
     public readonly static string sp_AtualizarLocacao =
         "EXEC sp_AtualizarLocacao @idLocacao, @DataDevolucaoReal, @Status, @Multa";
@@ -40,23 +37,24 @@ public class Locacao(
 
     public readonly static string sp_CancelarLocacao =
         "EXEC sp_CancelarLocacao @idLocacao, @Status";
+    
+    public void SetVeiculoNome(string modelo)
+        => VeiculoNome = modelo;
 
-
-    public void SetVeiculoNome(int idVeiculo)
-        => VeiculoNome = _veiculoController.BuscarVeiculoNome(idVeiculo);
-
-    public void SetClienteNome(int idCliente)
-        => ClienteNome = _clienteController.BuscarClienteId(idCliente);
+    public void SetClienteNome(string nome)
+        => ClienteNome = nome;
 
     public void SetMulta(decimal multa)
     {
         Multa = multa;
         ValorTotal += multa;
-
     }
+    
+    public void SetLocacaoId(Guid id)
+        => LocacaoId = id;
 
     public void SetStatus(EStatus status)
-        => Status = status;
+        => Status = status; 
 
     public void SetDataLocacao(DateTime dataLocacao)
         => DataLocacao = dataLocacao;
@@ -66,7 +64,8 @@ public class Locacao(
 
     public override string ToString()
     {
-        return $"Cliente: {ClienteNome}\n" +
+        return $"ID: {LocacaoId}\n" +
+               $"Cliente: {ClienteNome}\n" +
                $"Veiculo: {VeiculoNome}\n" +
                $"Data locacao: {DataLocacao}\n" +
                $"Data prevista: {DataDevolucaoPrevista}\n" +
