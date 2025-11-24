@@ -55,6 +55,24 @@ namespace Utils
                                   $"{tamanhoEsperado} dígitos numéricos.");
             } while (true);
         }
-        
+        public static string SolicitarTelefone()
+        {
+            string telefone;
+            do
+            {
+                Console.Write("\nDigite o telefone (apenas números, com DDD): ");
+                telefone = Console.ReadLine()?.Trim();
+
+                if (
+                    !string.IsNullOrWhiteSpace(telefone) &&
+                    telefone.All(char.IsDigit) &&
+                    (telefone.Length == 10 || telefone.Length == 11)
+                )
+                {
+                    return telefone;
+                }
+                Console.WriteLine("Telefone inválido! Digite o DDD seguido do número, totalizando 10 ou 11 dígitos, exemplo: 11912345678.");
+            } while (true);
+        }
     }
 }

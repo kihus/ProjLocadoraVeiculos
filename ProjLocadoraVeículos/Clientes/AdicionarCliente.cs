@@ -17,14 +17,13 @@ namespace Locadora.View.Clientes
 
                 Console.Write("\nDigite o email do cliente: ");
                 var emailCliente = Console.ReadLine() ?? "";
-
-                Console.Write("\nDigite o telefone do cliente: ");
-                var telefoneCliente = Console.ReadLine();
+                
+                var telefoneCliente = Helpers.SolicitarTelefone();
 
                 Console.Clear();
                 Console.WriteLine("======= DOCUMENTO DO CLIENTE =======");
-                Console.WriteLine("Digite o tipo de documento do cliente: ");
-                var tipoDocumento = Console.ReadLine() ?? "";
+                Console.Write("Digite o tipo de documento do cliente: ");
+                var tipoDocumento = Console.ReadLine().ToUpper() ?? "";
                 var numeroDocumento = Helpers.SolicitarNumeroDocumento(tipoDocumento);
                 
                 Console.Write("\nDigite a data de emissão do documento: ");
