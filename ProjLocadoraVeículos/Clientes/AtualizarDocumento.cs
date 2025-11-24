@@ -18,9 +18,9 @@ namespace Locadora.View.Clientes
 
                 Console.Write("Digite o email do cliente que deseja alterar o telefone: ");
                 var emailCliente = Console.ReadLine() ?? "";
-                
-                var cliente = clienteController.BuscaClientePorEmail(emailCliente).Result 
-                              ?? throw new Exception("");
+
+                var buscaClientePorEmail = await clienteController.BuscaClientePorEmail(emailCliente)
+                                           ?? throw new Exception("Nao foi possivel econtrar o cliente");
 
                 Console.Write("\nDigite o novo tipo de documento do cliente: ");
                 var tipoDocumento = Console.ReadLine() ?? "";
